@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace LYF_BLOG.Models
@@ -79,6 +80,10 @@ namespace LYF_BLOG.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
+        public string Gender { get; set; }
     }
 
     public class ResetPasswordViewModel

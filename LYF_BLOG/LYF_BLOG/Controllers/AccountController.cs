@@ -151,10 +151,19 @@ namespace LYF_BLOG.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Firstname = model.Firstname,
+                    Lastname = model.Lastname,
+                    Gender = model.Gender,
+                    CreateDate = DateTime.Today,
+                    RegisterIPAddress = Request.ServerVariables["HTTP_X_FORWARDED_FOR"] ?? ""
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await UpdateUserActivityInfo(user);
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
@@ -170,6 +179,15 @@ namespace LYF_BLOG.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        //Update User status after user login
+        private async Task UpdateUserActivityInfo(ApplicationUser user)
+        {
+            var _user = user;
+            _user.LastActivityDate = DateTime.Today;
+            _user.LastLoginIPAddress = Request.ServerVariables["HTTP_X_FORWARDED_FOR"] ?? "";
+            await UserManager.UpdateAsync(_user);
         }
 
         //

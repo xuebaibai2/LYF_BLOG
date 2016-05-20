@@ -3,12 +3,22 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 
 namespace LYF_BLOG.Models
 {
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
+        public string Gender { get; set; }
+        public DateTime CreateDate { get; set; }
+        public bool Approved { get; set; }
+        public DateTime LastActivityDate { get; set; }
+        public string RegisterIPAddress { get; set; }
+        public string LastLoginIPAddress { get; set; }
+        
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -21,7 +31,7 @@ namespace LYF_BLOG.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("BlogDB", throwIfV1Schema: false)
         {
         }
 

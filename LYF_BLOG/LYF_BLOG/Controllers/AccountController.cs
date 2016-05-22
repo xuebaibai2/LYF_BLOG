@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LYF_BLOG.Models;
+using LYF_BLOG.Utility;
 
 namespace LYF_BLOG.Controllers
 {
@@ -17,15 +18,17 @@ namespace LYF_BLOG.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationRoleManager _roleManager;
 
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            RoleManager = roleManager;
         }
 
         public ApplicationSignInManager SignInManager
@@ -34,9 +37,9 @@ namespace LYF_BLOG.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -49,6 +52,18 @@ namespace LYF_BLOG.Controllers
             private set
             {
                 _userManager = value;
+            }
+        }
+
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
             }
         }
 
@@ -120,7 +135,7 @@ namespace LYF_BLOG.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -151,21 +166,29 @@ namespace LYF_BLOG.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser {
+                var user = new ApplicationUser
+                {
                     UserName = model.Email,
                     Email = model.Email,
                     Firstname = model.Firstname,
                     Lastname = model.Lastname,
                     Gender = model.Gender,
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     RegisterIPAddress = Request.ServerVariables["HTTP_X_FORWARDED_FOR"] ?? ""
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await UpdateUserActivityInfo(user);
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    var addToRole = await AddUserRole(user);
+                    if (addToRole.Succeeded)
+                    {
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    }
+                    else
+                    {
+                        Error(addToRole);
+                    }
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -174,21 +197,72 @@ namespace LYF_BLOG.Controllers
 
                     return RedirectToAction("Index", "Home");
                 }
-                AddErrors(result);
+                else
+                {
+                    Error(result);
+                }
+                //AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
         }
 
+        // Check if a role is exist if it is exist then 
+        private async Task<IdentityResult> AddUserRole(ApplicationUser user)
+        {
+            IdentityResult addtorole, roleexist = new IdentityResult();
+            var default_RoleName = DEFAULT_ROLE.MEMBER.ROLENAME;
+            var default_RoleDescription = DEFAULT_ROLE.MEMBER.DESCRIPTIOIN;
+
+            var role = RoleManager.FindByName(default_RoleName);
+            if (role == null)
+            {
+                role = new ApplicationRole();
+                role.Name = default_RoleName;
+                role.Description = default_RoleDescription;
+                roleexist = RoleManager.Create(role);
+                if (!roleexist.Succeeded)
+                {
+                    return roleexist;
+                }
+                else
+                {
+                    addtorole = await UserManager.AddToRoleAsync(user.Id, default_RoleName);
+                }
+            }
+            else
+            {
+                addtorole = await UserManager.AddToRoleAsync(user.Id, default_RoleName);
+            }
+
+
+            return addtorole;
+        }
+
         //Update User status after user login
         private async Task UpdateUserActivityInfo(ApplicationUser user)
         {
             var _user = user;
-            _user.LastActivityDate = DateTime.Today;
+            _user.LastActivityDate = DateTime.Now;
             _user.LastLoginIPAddress = Request.ServerVariables["HTTP_X_FORWARDED_FOR"] ?? "";
             await UserManager.UpdateAsync(_user);
         }
+
+
+        // Error page to redirect user when something happend
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult Error(IdentityResult result)
+        {
+            string errorMSG = "";
+            foreach (var error in result.Errors)
+            {
+                errorMSG += (error + " ");
+            }
+            return Content("Sorry there is something happend with your registeration, please try again later /n Error Message is: " + errorMSG);
+        }
+
 
         //
         // GET: /Account/ConfirmEmail

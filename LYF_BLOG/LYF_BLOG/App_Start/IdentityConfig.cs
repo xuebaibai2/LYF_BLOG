@@ -57,7 +57,7 @@ namespace LYF_BLOG
                 //RequireNonLetterOrDigit = true,
                 RequireDigit = true,
                 //RequireLowercase = true,
-                RequireUppercase = true,
+                //RequireUppercase = true,
             };
 
             // Configure user lockout defaults
@@ -104,6 +104,21 @@ namespace LYF_BLOG
         public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
         {
             return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
+        }
+    }
+
+    // Configure the application roles management
+    public class ApplicationRoleManager : RoleManager<ApplicationRole>
+    {
+        public ApplicationRoleManager(IRoleStore<ApplicationRole, string> roleStore)
+            : base(roleStore)
+        {
+        }
+
+        public static ApplicationRoleManager Create(IdentityFactoryOptions<ApplicationRoleManager> options, IOwinContext context)
+        {
+            return new ApplicationRoleManager(
+                new RoleStore<ApplicationRole>(context.Get<ApplicationDbContext>()));
         }
     }
 }

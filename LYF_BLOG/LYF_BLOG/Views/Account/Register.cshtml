@@ -2,7 +2,68 @@
 @{
     ViewBag.Title = "Register";
 }
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //------------------Email Dulpication Check--------------//
+        $('#Email').on('input', function () {
+            $('#email_dulplicate').html("");
+            $('#Username').prop('placeholder', $('#Email').val());
+            $.ajax({
+                data: { email: $('#Email').val() },
+                type: 'GET',
+                url: '@Url.Action("GetUserFromEamil","account")',
+                beforeSend: function () {
+                    $('#loadingICON').show();
 
+                },
+                complete: function () {
+                    $('#loadingICON').hide();
+
+                },
+                success: function (email) {
+
+                    if (email != "") {
+                        $('#email_dulplicate').html("Email already exist!");
+
+                    } else {
+                        $('#email_dulplicate').html("");
+
+                    }
+                }
+            });
+        });
+
+        //-----------------Username Dulplication Check----------------//
+        $('#Username').on('input', function () {
+            $('#username_dulplicate').html("");
+            $.ajax({
+                data: { username: $('#Username').val() },
+                type: 'GET',
+                url: '@Url.Action("GetUserFromUsername","account")',
+                beforeSend: function () {
+                    $('#loadingICON_user').show();
+
+                },
+                complete: function () {
+                    $('#loadingICON_user').hide();
+
+                },
+                success: function (username) {
+
+                    if (username != "") {
+                        $('#username_dulplicate').html("Username already exist!");
+
+                    } else {
+                        $('#username_dulplicate').html("");
+
+                    }
+                }
+            });
+        });
+    });
+
+</script>
 <h2>@ViewBag.Title.</h2>
 
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
@@ -13,10 +74,27 @@
     @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="form-group">
         @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
+        <div class="col-md-4">
             @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+
+        </div>
+        <div class="col-md-pull-1 col-md-6">
+            <span style="color:red" id="email_dulplicate"></span>
+            <img id="loadingICON" src="~/Images/loading.gif" hidden="true" alt="loading" height="30" width="30" />
         </div>
     </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Username, new { @class = "col-md-2 control-label" })
+        <div class="col-md-4">
+            @Html.TextBoxFor(m => m.Username, new { @class = "form-control"})
+        </div>
+        <div class="col-md-pull-1 col-md-6">
+            <span style="color:red" id="username_dulplicate"></span>
+            <img id="loadingICON_user" src="~/Images/loading.gif" hidden="true" alt="loading" height="30" width="30" />
+        </div>
+    </div>
+
     <div class="form-group">
         @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
@@ -31,7 +109,7 @@
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
+            <input id="submitBtn" type="submit" class="btn btn-primary" value="Register" />
         </div>
     </div>
 }

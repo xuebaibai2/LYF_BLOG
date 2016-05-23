@@ -10,6 +10,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LYF_BLOG.Models;
 using LYF_BLOG.Utility;
+using LYF_BLOG.ControllerAuthorize;
+using System.Collections.Generic;
 
 namespace LYF_BLOG.Controllers
 {
@@ -168,7 +170,7 @@ namespace LYF_BLOG.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email,
+                    UserName = model.Username ?? model.Email,
                     Email = model.Email,
                     Firstname = model.Firstname,
                     Lastname = model.Lastname,
@@ -201,7 +203,7 @@ namespace LYF_BLOG.Controllers
                 {
                     Error(result);
                 }
-                //AddErrors(result);
+                AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
@@ -514,7 +516,22 @@ namespace LYF_BLOG.Controllers
 
             base.Dispose(disposing);
         }
+        [AjaxOnly]
+        [AllowAnonymous]
+        public ActionResult GetUserFromEamil(string email)
+        {
+            var user = UserManager.FindByEmail(email);
+            return Content(user == null ? "" : user.Email);
+        }
 
+        [AjaxOnly]
+        [AllowAnonymous]
+        public ActionResult GetUserFromUsername(string username)
+        {
+            var user = UserManager.FindByName(username);
+            return Content(user == null ? "" : user.UserName);
+        }
+        
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";

@@ -84,6 +84,7 @@ namespace LYF_BLOG.Models
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public string Gender { get; set; }
+        public string Username { get; set; }
     }
 
     public class ResetPasswordViewModel

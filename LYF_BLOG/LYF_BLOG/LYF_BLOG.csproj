@@ -167,6 +167,8 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Areas\BlogAdmin\BlogAdminAreaRegistration.cs" />
+    <Compile Include="Areas\BlogAdmin\Controllers\BoardController.cs" />
     <Compile Include="Areas\Blog\BlogAreaRegistration.cs" />
     <Compile Include="Blog\Data\Attachment.cs" />
     <Compile Include="Blog\Data\BlogDBContext.cs" />
@@ -181,6 +183,7 @@
     <Compile Include="Blog\Domain\BasicService.cs" />
     <Compile Include="Blog\Domain\BlogUserService.cs" />
     <Compile Include="ControllerAuthorize\AjaxOnlyAttribute.cs" />
+    <Compile Include="ControllerAuthorize\ControllerAuthorize.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -212,6 +215,10 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Blog\Views\web.config" />
+    <Content Include="Areas\BlogAdmin\Views\web.config" />
+    <Content Include="Areas\BlogAdmin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\BlogAdmin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\BlogAdmin\Views\Board\Index.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -262,6 +269,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Areas\BlogAdmin\Models\" />
     <Folder Include="Areas\Blog\Controllers\" />
     <Folder Include="Areas\Blog\Models\" />
     <Folder Include="Areas\Blog\Views\Shared\" />

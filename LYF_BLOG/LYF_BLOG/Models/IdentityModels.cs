@@ -27,30 +27,7 @@ namespace LYF_BLOG.Models
         public bool Active { get; set; }
         public string RegisterIPAddress { get; set; }
         public string LastLoginIPAddress { get; set; }
-        //public int bloguser_id { get; set; }
-
-        //[ForeignKey("bloguser_id")]
-        //public virtual BlogUser BlogUser { get; set; }
-        //public virtual ICollection<Attachment> Attachment { get; set; }
-
-        //public virtual ICollection<FollowTopic> FollowTopic { get; set; }
-
-        //public virtual ICollection<Post> Post { get; set; }
-
-        //public virtual ICollection<PostReport> PostReport { get; set; }
-
-        //public virtual ICollection<PostReport> PostReport1 { get; set; }
-
-        //public virtual ICollection<Topic> Topic { get; set; }
-
-        //public virtual ICollection<Topic> Topic1 { get; set; }
-
-        //public virtual ICollection<TopicTrack> TopicTrack { get; set; }
-
-        //public virtual ICollection<Category> Category { get; set; }
-
-
-
+        
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType

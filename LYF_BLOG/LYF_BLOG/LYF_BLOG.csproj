@@ -168,6 +168,18 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Areas\Blog\BlogAreaRegistration.cs" />
+    <Compile Include="Blog\Data\Attachment.cs" />
+    <Compile Include="Blog\Data\BlogDBContext.cs" />
+    <Compile Include="Blog\Data\BlogUser.cs" />
+    <Compile Include="Blog\Data\Board.cs" />
+    <Compile Include="Blog\Data\Category.cs" />
+    <Compile Include="Blog\Data\FollowTopic.cs" />
+    <Compile Include="Blog\Data\Post.cs" />
+    <Compile Include="Blog\Data\PostReport.cs" />
+    <Compile Include="Blog\Data\Topic.cs" />
+    <Compile Include="Blog\Data\TopicTrack.cs" />
+    <Compile Include="Blog\Domain\BasicService.cs" />
+    <Compile Include="Blog\Domain\BlogUserService.cs" />
     <Compile Include="ControllerAuthorize\AjaxOnlyAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -175,19 +187,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201605230939055_Add username coloum on user table.cs" />
-    <Compile Include="Migrations\201605230939055_Add username coloum on user table.Designer.cs">
-      <DependentUpon>201605230939055_Add username coloum on user table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utility\ReturnMSG.cs" />
     <Compile Include="Utility\RoleStruct.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\BlogDB.mdf" />
+    <Content Include="App_Data\BlogDB_log.ldf">
+      <DependentUpon>BlogDB.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
@@ -250,7 +262,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Areas\Blog\Controllers\" />
     <Folder Include="Areas\Blog\Models\" />
     <Folder Include="Areas\Blog\Views\Shared\" />
@@ -263,11 +274,6 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201605230939055_Add username coloum on user table.resx">
-      <DependentUpon>201605230939055_Add username coloum on user table.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

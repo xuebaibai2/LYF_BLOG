@@ -12,6 +12,7 @@ using LYF_BLOG.Models;
 using LYF_BLOG.Utility;
 using LYF_BLOG.ControllerAuthorize;
 using System.Collections.Generic;
+using LYF_BLOG.Blog.Domain;
 
 namespace LYF_BLOG.Controllers
 {
@@ -21,6 +22,7 @@ namespace LYF_BLOG.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private ApplicationRoleManager _roleManager;
+        private BlogUserService blogUserService = new BlogUserService();
 
         public AccountController()
         {
@@ -182,22 +184,29 @@ namespace LYF_BLOG.Controllers
                 if (result.Succeeded)
                 {
                     await UpdateUserActivityInfo(user);
-                    var addToRole = await AddUserRole(user);
-                    if (addToRole.Succeeded)
+                    ReturnMSG bloguserresult = blogUserService.CreateUser(user.Id);
+                    bloguserresult.GenerateMSG();
+                    if (bloguserresult.Condition)
                     {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                    }
-                    else
-                    {
-                        Error(addToRole);
-                    }
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                        var addToRole = await AddUserRole(user);
+                        if (addToRole.Succeeded)
+                        {
+                            await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        }
+                        else
+                        {
+                            Error(addToRole);
+                        }
 
-                    return RedirectToAction("Index", "Home");
+
+                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                        // Send an email with this link
+                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 else
                 {
@@ -531,7 +540,7 @@ namespace LYF_BLOG.Controllers
             var user = UserManager.FindByName(username);
             return Content(user == null ? "" : user.UserName);
         }
-        
+
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
